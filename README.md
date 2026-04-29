@@ -27,5 +27,17 @@ StudyTracker is a high-performance, visually stunning web application designed f
 2. Open `index.html` in any modern web browser.
 3. Start tracking your subjects and watch your progress soar!
 
+## 🌐 Deployment
+
+This project is optimized for deployment on **Vercel**. 
+
+### Deploying to Vercel:
+1. Push your code to a GitHub repository (done!).
+2. Connect your GitHub account to [Vercel](https://vercel.com).
+3. Import the repository and click **Deploy**.
+4. Vercel will automatically detect the static project and serve it with optimized headers and clean URLs.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fpraisegirl151%2FStudent-Productivity-Tracker-)
+
 ---
 *Built for excellence by Antigravity.*
