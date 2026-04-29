@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Productivity Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="logo">
+          <img src="logo.png" alt="StudyTracker Logo" class="logo-img" />
+        </div>
+        <button class="btn-icon" id="notif-toggle" onclick="toggleNotifications()" title="Enable Notifications">
+          <span id="notif-icon">🔔</span>
+        </button>
+      </div>
+      <p class="header-sub">Master your time, achieve your goals. Your academic journey, tracked and visualized.</p>
+    </div>
+  </header>
+
+  <!-- ===== MAIN LAYOUT ===== -->
+  <main class="main-container">
+
+    <!-- ===== SUMMARY CARDS ===== -->
+    <section class="summary-section">
+      <div class="card summary-card" id="card-total">
+        <div class="card-icon">⏱️</div>
+        <div class="card-info">
+          <span class="card-label">Focus Time</span>
+          <span class="card-value" id="total-hours">0 hrs</span>
+        </div>
+      </div>
+      <div class="card summary-card" id="card-completed">
+        <div class="card-icon">🏆</div>
+        <div class="card-info">
+          <span class="card-label">Milestones</span>
+          <span class="card-value" id="total-completed">0</span>
+        </div>
+      </div>
+      <div class="card summary-card" id="card-pending">
+        <div class="card-icon">🔋</div>
+        <div class="card-info">
+          <span class="card-label">In Queue</span>
+          <span class="card-value" id="total-pending">0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TWO-COLUMN LAYOUT ===== -->
+    <div class="content-grid">
+
+      <!-- LEFT: FORM -->
+      <section class="card form-card">
+        <h2 class="section-title" id="form-title"><span>📝</span> Create Entry</h2>
+
+        <!-- Hidden field for edit mode -->
+        <input type="hidden" id="edit-id" value="" />
+
+        <div class="form-group">
+          <label for="entry-date">Date</label>
+          <input type="date" id="entry-date" />
+        </div>
+
+        <div class="form-group">
+          <label for="entry-subject">Subject</label>
+          <input type="text" id="entry-subject" placeholder="e.g. Quantum Physics, Art History..." />
+        </div>
+
+        <div class="form-group">
+          <label for="entry-hours">Duration (Hours)</label>
+          <input type="number" id="entry-hours" min="0.1" max="24" step="0.1" placeholder="How long did you study?" />
+        </div>
+
+        <div class="form-group">
+          <label for="entry-task">Task Description</label>
+          <textarea id="entry-task" rows="3" placeholder="What specific topics did you cover?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="entry-status">Current Status</label>
+          <select id="entry-status">
+            <option value="Pending">🕒 Pending</option>
+            <option value="Completed">✅ Completed</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="add-btn" onclick="handleFormSubmit()">Save Entry</button>
+          <button class="btn btn-ghost" id="cancel-btn" onclick="cancelEdit()" style="display:none">Cancel</button>
+        </div>
+      </section>
+
+      <!-- RIGHT: CHART -->
+      <section class="card chart-card">
+        <h2 class="section-title"><span>📊</span> Distribution</h2>
+        <div class="chart-wrapper">
+          <canvas id="bar-chart"></canvas>
+          <p class="chart-empty" id="chart-empty">No data to visualize yet. <br>Start tracking to see your progress!</p>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ===== TABLE SECTION ===== -->
+    <section class="card table-card">
+      <div class="table-header">
+        <h2 class="section-title"><span>📋</span> Study Log</h2>
+        <div class="table-controls">
+          <select id="filter-status" onchange="renderTable()">
+            <option value="All">All Statuses</option>
+            <option value="Completed">Completed Only</option>
+            <option value="Pending">Pending Only</option>
+          </select>
+          <button class="btn btn-danger" onclick="showClearAllModal()">🗑️ Clear Data</button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="study-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Subject</th>
+              <th>Hours</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Rows injected by JS -->
+          </tbody>
+        </table>
+        <!-- Empty state -->
+        <div class="empty-state" id="empty-state">
+          <span>📚</span>
+          <p>Your study log is empty. Time to hit the books!</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== CUSTOM CONFIRMATION MODAL ===== -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-icon" id="modal-icon">⚠️</div>
+      <h3 class="modal-title" id="modal-title">Are you sure?</h3>
+      <p class="modal-text" id="modal-text">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="modal-confirm-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>StudyTrack Premium &copy; 2025 · Engineered for Excellence 🎓</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
